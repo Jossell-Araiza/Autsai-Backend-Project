@@ -1,217 +1,248 @@
-# Book Recommendation API 📚
+# Autsai Backend Assignment – Junior Backend Developer
 
-A RESTful API built with FastAPI that provides personalized book recommendations based on user preferences using collaborative filtering. It includes a simple Vanilla JS frontend for interaction, SQLite for data storage, and scikit-learn/pandas for the ML model.
+## Overview
 
-This project demonstrates end-to-end development of a data-driven application, from data ingestion to API deployment and frontend integration.
+This project is a submission for the Junior Backend Developer position at **Autsai**, completed by **Jossell**. It implements a robust messaging system using Firebase Authentication and Firestore, fully meeting:
+
+- ✅ All Tier 1 requirements (user authentication, one-on-one messaging with timestamps)
+- ✅ Two Tier 2 features (edit user profile, group chat with add/remove users)
+- ✅ One Tier 3 feature (reply to specific messages)
+
+A clean, user-friendly frontend enhances the demo with input validation, current `displayName` display, and logout functionality. The codebase is modular, error-handled, and formatted with ESLint/Prettier for readability and maintainability.
 
 ---
 
-## 🚀 Features
+## ✨ Features
 
-- **User Preferences Input**: Users can add ratings (1-5) for books.
-- **Personalized Recommendations**: User-based collaborative filtering with cosine similarity.
-- **Cold Start Handling**: Fallback to top-rated books for new users.
-- **Sparse Data Fallback**: Pads with popular books if too few recommendations are found.
-- **Data Storage**: SQLite database from Goodbooks-10k (~10k books, ~1M ratings).
-- **Frontend**: Basic HTML + Vanilla JavaScript interface.
-- **Optimization**: Precomputes similarity matrix for fast, real-time queries.
+### Tier 1 (Required)
+
+- **User Authentication**: Register and login using Firebase Authentication (email/password).
+- **One-on-One Messaging**: Send/receive messages stored in Firestore with timestamps.
+- **Code Quality**: Modular Express.js backend, comprehensive error handling, and ESLint/Prettier formatting.
+
+### Tier 2 (Optional)
+
+- **Edit User Profile**: Update display name via backend API and UI, with current name shown after login.
+- **Group Chat**: Create groups, manage members, and send/receive group messages.
+
+### Tier 3 (Advanced)
+
+- **Reply to Specific Messages**: Support replying to messages in 1-1 and group chats using `replyToId`.
+
+### Additional Enhancements
+
+- Logout functionality.
+- Input validation with alerts for missing fields.
+- Current user `displayName` shown after login/update.
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Backend**: FastAPI, Python 3.8+, Uvicorn
-- **Data/ML**: pandas, scikit-learn, SciPy (sparse), SQLite
-- **Frontend**: HTML, JavaScript
-- **Dataset**: [Goodbooks-10k](https://www.kaggle.com/datasets/zygmunt/goodbooks-10k) from Kaggle
+- **Backend**: Node.js, Express.js, Firebase Admin SDK
+- **Frontend**: HTML, CSS, JavaScript, Firebase Client SDK
+- **Tools**: Postman, ESLint, Prettier, Git
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Setup Instructions
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/Autsai-Assignment.git
+git clone [your-repo-url]
 cd Autsai-Assignment
 ```
 
-### 2. Set Up Virtual Environment
+### 2. Install Dependencies
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+npm install
 ```
 
-### 3. Install Dependencies
+Required packages:
+
+- express
+- body-parser
+- firebase-admin
+- firebase
+- nodemon (dev)
+
+### 3. Configure Firebase
+
+- Create a project at [Firebase Console](https://console.firebase.google.com)
+- Enable Email/Password Authentication and Firestore (test mode)
+- Download the service account key JSON and place it in the root directory as `ServiceAccountKey.json` (excluded from Git)
+
+### 4. Run the Application
 
 ```bash
-pip install -r requirements.txt
+npm start
+```
+
+- Server runs at: http://localhost:3000
+- Frontend accessible at: http://localhost:3000
+
+---
+
+## 🔌 API Endpoints (Test with Postman)
+
+### Auth Routes
+
+- `POST /auth/register` → `{email, password}`
+- `POST /auth/login` → `{email, password}`
+- `PUT /auth/profile` → `{uid, displayName}`
+- `DELETE /auth/delete` → `{uid}`
+
+### One-on-One Messaging
+
+- `POST /messages/send` → `{senderId, receiverId, content, replyToId (optional)}`
+- `GET /messages/conversations/:senderId/:receiverId`
+
+### Group Chat
+
+- `POST /messages/groups/create` → `{creatorId, groupName, userIds: array}`
+- `PUT /messages/groups/:groupId/add` → `{userId}`
+- `PUT /messages/groups/:groupId/remove` → `{userId}`
+- `POST /messages/groups/:groupId/send` → `{senderId, content, replyToId (optional)}`
+- `GET /messages/groups/:groupId/messages`
+
+---
+
+## 🧪 Frontend Usage
+
+Open `http://localhost:3000` in your browser. Features include:
+
+- Register/login
+- Send/reply to messages (1-1 and group)
+- Create groups, add/remove users
+- Update profile
+- Delete account
+- Logout
+
+🔒 Validation alerts prevent missing fields.
+
+---
+
+## 🗂 Project Structure
+
+```
+Autsai-Assignment/
+├── config/
+│   └── firebase.js           # Firebase Admin SDK init
+├── public/
+│   ├── app.js                # Frontend logic (validation, reply, group features)
+│   ├── index.html            # UI for auth, messages, groups
+│   └── style.css             # Basic styling
+├── routes/
+│   ├── auth.js               # Auth endpoints (register, login, profile)
+│   └── messages.js           # Messaging (1-1, group, replies)
+├── .env                      # PORT and other env vars
+├── .eslintrc.json            # ESLint config
+├── .prettierrc.json          # Prettier config
+├── index.js                  # Express app entry point
+├── package.json              # Dependencies & scripts
+├── README.md                 # This file
+└── ServiceAccountKey.json    # Firebase credentials (gitignored)
 ```
 
 ---
 
-## 📁 Project Structure
+## 💡 Technical Decisions
 
-```
-book-recommendation-api/
-├── data/
-│   ├── books.csv
-│   └── ratings.csv
-├── app.py              # FastAPI application
-├── database.py         # DB setup and query helpers
-├── model.py            # Recommendation engine logic
-├── precompute.py       # Run once to precompute similarities
-├── index.html          # Frontend
-├── books.db            # SQLite DB (auto-generated)
-├── user_item_sparse.npz  # Precomputed sparse matrix
-├── user_index.pkl
-├── book_index.pkl
-├── user_similarity.npy
-└── requirements.txt
-```
+- **Firestore vs Realtime DB**: Firestore chosen for structured data, subcollections, and query support.
+- **Data Paths**:
+  - `conversations/[uid1_uid2]/messages`: One-on-one messages (UIDs sorted alphabetically)
+  - `groups/[groupId]/messages`: Group messages
+- **Backend Structure**: Modular routes (`auth.js`, `messages.js`) with consistent error handling.
+- **Frontend Enhancements**: Display `displayName`, reply input, alerts for validation, and group chat controls.
+- **Security**: `.gitignore` excludes service keys; Firestore in test mode (production rules required).
+- **Code Style**: ESLint + Prettier with 2-space indent, single quotes, and clear error messages.
 
 ---
 
-## 📥 Dataset
+## 🔢 Firebase Data Structure
 
-1. Download the **Goodbooks-10k** dataset from Kaggle.
-2. Place `books.csv` and `ratings.csv` inside the `data/` folder.
+### Authentication
 
----
-
-## 🧱 Initialize Database
-
-```bash
-python -c "from database import init_db; init_db()"
+```json
+{
+  "uid": "unique_id",
+  "email": "user@example.com",
+  "displayName": "User Name"
+}
 ```
 
----
+### Firestore
 
-## ⚡ Precompute Similarity Matrix
+```json
+conversations/
+  [uid1_uid2]/
+    messages/
+      {
+        "senderId": "uid1",
+        "content": "Hello!",
+        "timestamp": "...",
+        "replyToId": "msg123" // optional
+      }
 
-Run this once to build the similarity matrix. It may take 5–10 minutes depending on your machine.
-
-```bash
-python precompute.py
+groups/
+  [groupId]/
+    {
+      "name": "Group Name",
+      "creatorId": "uid1",
+      "members": ["uid1", "uid2", ...],
+      "createdAt": "..."
+    }
+    messages/
+      {
+        "senderId": "uid2",
+        "content": "Hi group!",
+        "timestamp": "...",
+        "replyToId": "msg456" // optional
+      }
 ```
 
-**Tip:** To demo quickly, you can uncomment the subsample line in `precompute.py` to limit to 5000 users.
+---
+
+## ✅ Running & Testing
+
+- **Backend**: Test all endpoints via Postman.
+- **Frontend**: Full app available at `http://localhost:3000`.
+- **Firebase Console**: Monitor users and data in Auth/Firestore tabs.
 
 ---
 
-## ▶️ Usage
+## 📌 Notes for Reviewers
 
-### Run the API Locally
+Fully implemented:
 
-```bash
-uvicorn app:app --reload
-```
+- Tier 1 ✅ (auth, 1-1 messaging)
+- Tier 2 ✅ (profile update, group chat)
+- Tier 3 ✅ (message replies)
 
-Visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for the Swagger UI.
+**Video demo included** (linked in submission) showing:
 
-### Example API Endpoints
+- API tests via Postman
+- Functional frontend walkthrough
+- Firebase data structure in use
 
-- `POST /add_rating`: Add a user rating  
-  Request body:
+Code is version-controlled in a **private GitHub repo** (available on request)
 
-  ```json
-  {
-    "user_id": 99999,
-    "book_id": 1,
-    "rating": 5
-  }
-  ```
+**Frontend polish includes**:
 
-- `GET /recommend/99999?top_n=5`: Get 5 recommendations for user 99999
+- Input validation
+- Current user info
+- Logout functionality
 
 ---
 
-## 🌐 Frontend (Browser Interface)
+## ⚠️ Known Limitations
 
-1. Open `index.html` in your browser.  
-   _(Optional: use the Live Server extension in VS Code for smoother experience.)_
-
-2. Add a few ratings, then click "Get Recommendations" to view results.
-
----
-
-## 🧪 Testing
-
-- For a **new user**, use `user_id = 99999`, add a few ratings via the form, then fetch recommendations.
-- For an **existing user**, use an ID from the dataset (e.g., `30944`) to get instant recommendations.
+- **Replies**: Currently require manual input of message ID (could be enhanced with clickable UI).
+- **Group Chat UI**: Minimal; could benefit from styling and real-time updates.
+- **Firestore Rules**: App is in test mode. Secure rules needed for production deployment.
 
 ---
 
-## ⚡ Optimization Notes
-
-Originally, the app recomputed the similarity matrix on every request (~5 mins). Optimizations made:
-
-- Switched to **SciPy sparse matrices** to improve performance and reduce memory.
-- **Precomputed** the user-user similarity matrix (run once with `precompute.py`).
-- **On-the-fly** similarity only for brand-new users.
-- Optionally subsample dataset for demos.
-
-**Result:** Recommendations now return in **under 5 seconds**.
-
----
-
-## 🌍 Deployment
-
-This app is deployed via [Render](https://render.com/). You can access the live version here:
-
-👉 [Live Demo on Render](https://book-recommendation-api.onrender.com)
-
-To run your own:
-
-1. Create a new **FastAPI** web service on Render.
-2. Connect to your GitHub repo.
-3. Set the start command as:
-
-```bash
-uvicorn app:app --host 0.0.0.0 --port 10000
-```
-
-4. Add a `render.yaml` or set build/runtime settings manually.
-
----
-
-## 💡 Real-World Relevance
-
-This project replicates how major platforms (e.g., Netflix, Amazon, Goodreads) personalize content:
-
-- **Cold Start** and **Sparse Data** challenges are tackled directly.
-- Mirrors use-cases like personalized shopping or digital library systems.
-- Demonstrates essential skills: data pipelines, recommendation algorithms, database handling, and backend/frontend integration.
-
----
-
-## 🔧 Potential Improvements
-
-- Add content-based filtering (e.g., author/genre similarity).
-- Improve frontend UI with dropdowns/search + CSS styling.
-- Deploy behind authentication.
-- Use Redis for caching.
-- Use Surprise/LightFM for more robust models.
-- Add automated unit testing with `pytest`.
-
----
-
-## 📸 Screenshots
-
-Here’s a glimpse of the frontend:
-
-**Login/Rating Screen**
-![Login Page](screenshots/login.png)
-
-**Recommendations View**
-![Dashboard](screenshots/dashboard.png)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.  
-Feel free to use, modify, and distribute for personal or commercial projects.
-
----
+Submitted for **Autsai Junior Backend Developer Assignment, July 2025**.
