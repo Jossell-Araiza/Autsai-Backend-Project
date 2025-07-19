@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autsai Messaging</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="auth-section">
+      <h2>Sign Up / Sign In</h2>
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="register()">Register</button>
+      <button onclick="login()">Login</button>
+      <p id="auth-status"></p>
+    </div>
+    <div id="messaging-section" style="display: none">
+      <h2>Messages</h2>
+      <input type="text" id="receiverId" placeholder="Receiver UID" />
+      <input type="text" id="message" placeholder="Type a message" />
+      <button onclick="sendMessage()">Send</button>
+      <div id="messages"></div>
+    </div>
+    <div id="profile-section" style="display: none">
+      <h2>Profile</h2>
+      <input type="text" id="displayName" placeholder="New display name" />
+      <button onclick="updateProfile()">Update Name</button>
+      <button onclick="deleteAccount()">Delete Account</button>
+      <button onclick="logout()">Logout</button>
+      <p id="profile-status"></p>
+    </div>
+    <script>
+      window.firebaseConfig = {
+        apiKey: 'AIzaSyAkVkAv5scKX8oAJRK2sbYdLBJynuMnMIk',
+        authDomain: 'autsai-assignment.firebaseapp.com',
+        projectId: 'autsai-assignment',
+        storageBucket: 'autsai-assignment.firebasestorage.app',
+        messagingSenderId: '773927703758',
+        appId: '1:773927703758:web:17c0a12acdf8b07bc26c9f',
+        measurementId: 'G-EG9T3JXN8H',
+      };
+    </script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
