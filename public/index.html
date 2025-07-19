@@ -9,8 +9,13 @@
   <body>
     <div id="auth-section">
       <h2>Sign Up / Sign In</h2>
-      <input type="email" id="email" placeholder="Email" />
-      <input type="password" id="password" placeholder="Password" />
+      <input type="email" id="email" placeholder="Email" autocomplete="off" />
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="off"
+      />
       <button onclick="register()">Register</button>
       <button onclick="login()">Login</button>
       <p id="auth-status"></p>
@@ -19,11 +24,42 @@
       <h2>Messages</h2>
       <input type="text" id="receiverId" placeholder="Receiver UID" />
       <input type="text" id="message" placeholder="Type a message" />
+      <input
+        type="text"
+        id="replyToId"
+        placeholder="Reply to message ID (optional)"
+      />
       <button onclick="sendMessage()">Send</button>
       <div id="messages"></div>
     </div>
+    <div id="group-section" style="display: none">
+      <h2>Group Chat</h2>
+      <input type="text" id="groupName" placeholder="Group Name" />
+      <input
+        type="text"
+        id="groupUserIds"
+        placeholder="User IDs (comma-separated)"
+      />
+      <button onclick="createGroup()">Create Group</button>
+      <input type="text" id="groupId" placeholder="Group ID" />
+      <input type="text" id="groupMessage" placeholder="Group Message" />
+      <input
+        type="text"
+        id="groupReplyToId"
+        placeholder="Reply to ID (optional)"
+      />
+      <button onclick="sendGroupMessage()">Send to Group</button>
+      <button onclick="getGroupMessages()">Get Group Messages</button>
+      <input type="text" id="addUserId" placeholder="Add User ID" />
+      <button onclick="addToGroup()">Add User</button>
+      <input type="text" id="removeUserId" placeholder="Remove User ID" />
+      <button onclick="removeFromGroup()">Remove User</button>
+      <div id="group-messages"></div>
+      <p id="group-status"></p>
+    </div>
     <div id="profile-section" style="display: none">
       <h2>Profile</h2>
+      <p id="current-display-name"></p>
       <input type="text" id="displayName" placeholder="New display name" />
       <button onclick="updateProfile()">Update Name</button>
       <button onclick="deleteAccount()">Delete Account</button>
