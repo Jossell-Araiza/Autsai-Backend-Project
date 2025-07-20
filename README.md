@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a submission for the Junior Backend Developer position at **Autsai**, completed by **Jossell**. It implements a robust messaging system using Firebase Authentication and Firestore, fully meeting:
+This project is a submission for the Junior Backend Developer position at **Autsai**, completed by **Jossell Araiza**. It implements a robust messaging system using Firebase Authentication and Firestore, fully meeting:
 
 - ✅ All Tier 1 requirements (user authentication, one-on-one messaging with timestamps)
 - ✅ Two Tier 2 features (edit user profile, group chat with add/remove users)
@@ -50,7 +50,7 @@ A clean, user-friendly frontend enhances the demo with input validation, current
 ### 1. Clone the Repository
 
 ```bash
-git clone [your-repo-url]
+git clone [https://github.com/Jossell-Araiza/Autsai-Backend-Projectl]
 cd Autsai-Assignment
 ```
 
@@ -242,6 +242,7 @@ Code is version-controlled in a **private GitHub repo** (available on request)
 - **Replies**: Currently require manual input of message ID (could be enhanced with clickable UI).
 - **Group Chat UI**: Minimal; could benefit from styling and real-time updates.
 - **Firestore Rules**: App is in test mode. Secure rules needed for production deployment.
+- **Delete Messages**: Currently not able to delete messages or group chat messages.
 
 ---
 
