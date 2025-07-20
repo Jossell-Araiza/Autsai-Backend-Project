@@ -50,7 +50,7 @@ A clean, user-friendly frontend enhances the demo with input validation, current
 ### 1. Clone the Repository
 
 ```bash
-git clone [https://github.com/Jossell-Araiza/Autsai-Backend-Projectl]
+git clone https://github.com/Jossell-Araiza/Autsai-Backend-Project
 cd Autsai-Assignment
 ```
 
