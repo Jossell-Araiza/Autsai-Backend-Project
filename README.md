@@ -223,7 +223,6 @@ Fully implemented:
 
 **Video demo included** (linked in submission) showing:
 
-- API tests via Postman
 - Functional frontend walkthrough
 - Firebase data structure in use
 
