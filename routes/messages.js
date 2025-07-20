@@ -4,12 +4,13 @@ const { FieldValue } = require('firebase-admin/firestore');
 
 const router = express.Router();
 
-// Existing send message (updated for replyToId)
+// Send 1-1 message (with replyToId support)
 router.post('/send', async (req, res) => {
   try {
     const { senderId, receiverId, content, replyToId } = req.body;
-    if (!senderId || !receiverId || !content)
+    if (!senderId || !receiverId || !content) {
       return res.status(400).json({ error: 'Missing fields' });
+    }
 
     const convoId = [senderId, receiverId].sort().join('_');
 
@@ -17,7 +18,7 @@ router.post('/send', async (req, res) => {
       senderId,
       content,
       timestamp: new Date().toISOString(),
-      replyToId: replyToId || null, // Optional reply
+      replyToId: replyToId || null,
     };
 
     await db
@@ -33,14 +34,41 @@ router.post('/send', async (req, res) => {
   }
 });
 
-// Existing get messages (no change needed)
+// Get 1-1 messages
+router.get('/conversations/:senderId/:receiverId', async (req, res) => {
+  try {
+    const { senderId, receiverId } = req.params;
+
+    const convoId = [senderId, receiverId].sort().join('_');
+
+    const snapshot = await db
+      .collection('conversations')
+      .doc(convoId)
+      .collection('messages')
+      .orderBy('timestamp')
+      .get();
+
+    const messages = snapshot.docs.map((doc) => ({
+      id: doc.id, // Include message ID for reply feature
+      ...doc.data(),
+    }));
+
+    res.json({ messages });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: 'Failed to fetch messages: ' + error.message });
+  }
+});
 
 // Group chat creation
 router.post('/groups/create', async (req, res) => {
   try {
     const { creatorId, groupName, userIds } = req.body;
-    if (!creatorId || !groupName || !userIds || !Array.isArray(userIds))
+    if (!creatorId || !groupName || !userIds || !Array.isArray(userIds)) {
       return res.status(400).json({ error: 'Missing fields' });
+    }
 
     const groupId = db.collection('groups').doc().id;
     const group = {
@@ -64,7 +92,9 @@ router.put('/groups/:groupId/add', async (req, res) => {
   try {
     const { groupId } = req.params;
     const { userId } = req.body;
-    if (!userId) return res.status(400).json({ error: 'Missing userId' });
+    if (!userId) {
+      return res.status(400).json({ error: 'Missing userId' });
+    }
 
     const groupRef = db.collection('groups').doc(groupId);
     await groupRef.update({
@@ -83,7 +113,9 @@ router.put('/groups/:groupId/remove', async (req, res) => {
   try {
     const { groupId } = req.params;
     const { userId } = req.body;
-    if (!userId) return res.status(400).json({ error: 'Missing userId' });
+    if (!userId) {
+      return res.status(400).json({ error: 'Missing userId' });
+    }
 
     const groupRef = db.collection('groups').doc(groupId);
     await groupRef.update({
@@ -102,8 +134,9 @@ router.post('/groups/:groupId/send', async (req, res) => {
   try {
     const { groupId } = req.params;
     const { senderId, content, replyToId } = req.body;
-    if (!senderId || !content)
+    if (!senderId || !content) {
       return res.status(400).json({ error: 'Missing fields' });
+    }
 
     const message = {
       senderId,
@@ -139,7 +172,10 @@ router.get('/groups/:groupId/messages', async (req, res) => {
       .orderBy('timestamp')
       .get();
 
-    const messages = snapshot.docs.map((doc) => doc.data());
+    const messages = snapshot.docs.map((doc) => ({
+      id: doc.id, // Include message ID for reply feature
+      ...doc.data(),
+    }));
 
     res.json({ messages });
   } catch (error) {

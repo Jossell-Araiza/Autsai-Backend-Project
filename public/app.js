@@ -49,6 +49,7 @@ function login() {
 function displayCurrentName() {
   const currentUser = auth.currentUser;
   if (currentUser) {
+    console.log('Current user displayName:', currentUser.displayName); // Debug
     document.getElementById(
       'current-display-name'
     ).innerText = `Current Name: ${currentUser.displayName || 'None set'}`;
@@ -126,20 +127,24 @@ async function sendMessage() {
 
 async function fetchMessages(senderId, receiverId) {
   try {
+    console.log('Fetching messages for:', senderId, receiverId);
     const response = await fetch(
       `/messages/conversations/${senderId}/${receiverId}`
     );
+    console.log('Fetch response status:', response.status);
     const result = await response.json();
+    console.log('Fetch result:', result);
     const messagesDiv = document.getElementById('messages');
     messagesDiv.innerHTML = result.messages
       .map(
         (msg) =>
-          `<p><strong>${msg.senderId}:</strong> ${msg.content} ${
+          `<p>ID: ${msg.id} <strong>${msg.senderId}:</strong> ${msg.content} ${
             msg.replyToId ? `(Reply to: ${msg.replyToId})` : ''
           } <em>(${new Date(msg.timestamp).toLocaleString()})</em></p>`
       )
       .join('');
   } catch (error) {
+    console.error('Fetch error:', error);
     alert(`Error fetching messages: ${error.message}`);
   }
 }
@@ -155,8 +160,9 @@ async function updateProfile() {
     });
     const result = await response.json();
     if (response.ok) {
+      await auth.currentUser.reload(); // Refresh user data
       document.getElementById('profile-status').innerText = 'Profile updated!';
-      displayCurrentName(); // Refresh displayed name
+      displayCurrentName(); // Update UI with new name
     } else {
       document.getElementById(
         'profile-status'
@@ -305,7 +311,7 @@ async function getGroupMessages() {
     groupMessagesDiv.innerHTML = result.messages
       .map(
         (msg) =>
-          `<p><strong>${msg.senderId}:</strong> ${msg.content} ${
+          `<p>ID: ${msg.id} <strong>${msg.senderId}:</strong> ${msg.content} ${
             msg.replyToId ? `(Reply to: ${msg.replyToId})` : ''
           } <em>(${new Date(msg.timestamp).toLocaleString()})</em></p>`
       )
